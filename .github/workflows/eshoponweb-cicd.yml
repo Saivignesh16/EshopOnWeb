@@ -5,8 +5,6 @@ on: [push, workflow_dispatch]
 
 #Environment variables https://docs.github.com/en/actions/learn-github-actions/environment-variables
 env:
-  RESOURCE-GROUP: rg-eshoponweb-vignesh
-  LOCATION: westeurope
   TEMPLATE-FILE: infra/webapp.bicep
   SUBSCRIPTION-ID: 2e89365b-8864-49d5-b5f2-f3bb66426738
   WEBAPP-NAME: eshoponweb-webapp-vignesh
@@ -74,6 +72,19 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set dynamic variables
+        run: |
+          echo "RESOURCE-GROUP=rg-${{ github.run_id }}" >> $GITHUB_ENV
+          echo "LOCATION=westeurope" >> $GITHUB_ENV
+
+      - name: Create Resource Group
+        uses: Azure/cli@v2
+        with:
+          inlineScript: |
+            az group create \
+              --name $RESOURCE-GROUP \
+                --location $LOCATION
 
       # Deploy Azure WebApp using Bicep file
       - name: deploy
