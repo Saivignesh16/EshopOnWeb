@@ -3,5 +3,5 @@ services:
   web:
     project: ./src/Web
     language: csharp
-    host: appservice
+    host: appservice -
     model: aspnetcore
